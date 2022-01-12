@@ -1,0 +1,96 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "databaseName": {
+            "value": "wordpressdb2"
+        },
+        "administratorLogin": {
+            "value": "puffersoft"
+        },
+        "administratorLoginPassword": {
+            "value": "asdf.asdf1"          
+        },
+        "location": {
+            "value": "eastus"
+        },
+        "serverName": {
+            "value": "webserverwordpress"
+        },
+        "skuCapacity": {
+            "value": 4
+        },
+        "skuFamily": {
+            "value": "Gen5"
+        },
+        "skuName": {
+            "value": "GP_Gen5_4"
+        },
+        "skuSizeMB": {
+            "value": 102400
+        },
+        "skuTier": {
+            "value": "GeneralPurpose"
+        },
+        "version": {
+            "value": "5.7"
+        },
+        "backupRetentionDays": {
+            "value": 7
+        },
+        "geoRedundantBackup": {
+            "value": "Disabled"
+        },
+        "previewFeature": {
+            "value": ""
+        },
+        "charset": {
+            "value": "utf8"
+        },
+        "collation": {
+            "value": "utf8_general_ci"
+        },
+        "tags": {
+            "value": {}
+        },
+        "storageAutoGrow": {
+            "value": "Enabled"
+        },
+        "infrastructureEncryption": {
+            "value": "Disabled"
+        },
+        "subscriptionId": {
+            "value": "eeb9dfdd-9c17-44c3-a4a0-7529399ce200"
+        },
+        "name": {
+            "value": "ourwebsite"
+        },
+        "hostingPlanName": {
+            "value": "ASP-WordpressWesbite-9ed9"
+        },
+        "serverFarmResourceGroup": {
+            "value": "Wordpress_Wesbite"
+        },
+        "alwaysOn": {
+            "value": false
+        },
+        "sku": {
+            "value": "Free"
+        },
+        "skuCode": {
+            "value": "F1"
+        },
+        "workerSize": {
+            "value": "0"
+        },
+        "workerSizeId": {
+            "value": "0"
+        },
+        "numberOfWorkers": {
+            "value": "1"
+        },
+        "linuxFxVersion": {
+            "value": "PHP|8.0"
+        }
+    }
+}

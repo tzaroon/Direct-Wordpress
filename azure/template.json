@@ -1,0 +1,225 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "databaseName": {
+            "type": "String"
+        },
+        "subscriptionId": {
+            "type": "String"
+        },
+        "name": {
+            "type": "String"
+        },
+        "location": {
+            "type": "String"
+        },
+        "hostingPlanName": {
+            "type": "String"
+        },
+        "serverFarmResourceGroup": {
+            "type": "String"
+        },
+        "alwaysOn": {
+            "type": "Bool"
+        },
+        "sku": {
+            "type": "String"
+        },
+        "skuCode": {
+            "type": "String"
+        },
+        "workerSize": {
+            "type": "String"
+        },
+        "workerSizeId": {
+            "type": "String"
+        },
+        "numberOfWorkers": {
+            "type": "String"
+        },
+        "linuxFxVersion": {
+            "type": "String"
+        },
+        "administratorLogin": {
+            "type": "String"
+        },
+        "administratorLoginPassword": {
+            "type": "SecureString"
+        },
+        "serverName": {
+            "type": "String"
+        },
+        "skuCapacity": {
+            "type": "Int"
+        },
+        "skuFamily": {
+            "type": "String"
+        },
+        "skuName": {
+            "type": "String"
+        },
+        "skuSizeMB": {
+            "type": "Int"
+        },
+        "skuTier": {
+            "type": "String"
+        },
+        "version": {
+            "type": "String"
+        },
+        "backupRetentionDays": {
+            "type": "Int"
+        },
+        "geoRedundantBackup": {
+            "type": "String"
+        },
+        "previewFeature": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "charset": {
+            "type": "String"
+        },
+        "collation": {
+            "type": "String"
+        },
+        "tags": {
+            "defaultValue": {},
+            "type": "Object"
+        },
+        "storageAutoGrow": {
+            "defaultValue": "Disabled",
+            "type": "String"
+        },
+        "infrastructureEncryption": {
+            "defaultValue": "Disabled",
+            "type": "String"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('name')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+            ],
+            "tags": {},
+            "properties": {
+                "name": "[parameters('name')]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                            "value": "true"
+                        },
+                        {
+                            "name": "DATABASE_HOST",
+                            "value": "[concat(parameters('serverName') ,'.mysql.database.azure.com')]"
+                        },
+                        {
+                            "name": "DATABASE_NAME",
+                            "value": "[parameters('databaseName')]"
+                        },
+                        {
+                            "name": "DATABASE_PASSWORD",
+                            "value": "[parameters('administratorLoginPassword')]"
+                        },
+                        {
+                            "name": "DATABASE_USERNAME",
+                            "value": "[concat(parameters('administratorLogin'),'@',parameters('serverName'))]"
+                        }                         
+                    ],
+                    "appCommandLine": "",
+                    "linuxFxVersion": "DOCKER|appsvcorg/wordpress-alpine-php:0.72",
+                    "connectionStrings": [
+                        {
+                            "name": "defaultConnection",
+                            "ConnectionString": "[concat('Database=', parameters('databaseName'), ';Data Source=', parameters('serverName') ,'.mysql.database.azure.com;User Id=',parameters('administratorLogin'),'@',parameters('serverName') ,';Password=',parameters('administratorLoginPassword'))]",
+                            "type": "MySQL"
+                        }
+                    ]
+                },
+                "name": "[parameters('name')]",
+                "clientAffinityEnabled": false,
+                "serverFarmId": "[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('hostingPlanName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {},
+            "sku": {
+                "Tier": "[parameters('sku')]",
+                "Name": "[parameters('skuCode')]"
+            },
+            "kind": "linux",
+            "properties": {
+                "name": "[parameters('hostingPlanName')]",
+                "workerSize": "[parameters('workerSize')]",
+                "workerSizeId": "[parameters('workerSizeId')]",
+                "numberOfWorkers": "[parameters('numberOfWorkers')]",
+                 "reserved": true
+            }
+        },
+        
+        {
+            "type": "Microsoft.DBforMySQL/servers",
+            "apiVersion": "2017-12-01-preview",
+            "name": "[parameters('serverName')]",
+            "location": "[parameters('location')]",
+            "tags": "[parameters('tags')]",
+            "sku": {
+                "name": "[parameters('skuName')]",
+                "tier": "[parameters('skuTier')]",
+                "capacity": "[parameters('skuCapacity')]",
+                "size": "[parameters('skuSizeMB')]",
+                "family": "[parameters('skuFamily')]"
+            },
+            "properties": {
+                "version": "[parameters('version')]",
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "storageProfile": {
+                    "storageMB": "[parameters('skuSizeMB')]",
+                    "backupRetentionDays": "[parameters('backupRetentionDays')]",
+                    "geoRedundantBackup": "[parameters('geoRedundantBackup')]",
+                    "storageAutoGrow": "[parameters('storageAutoGrow')]"
+                },
+                "sslEnforcement": "Disabled"
+            },
+            "resources": [
+                {
+                    "type": "Microsoft.DBforMySQL/servers/firewallRules",
+                    "apiVersion": "2017-12-01",
+                    "name": "[concat(parameters('serverName'), '/AllowAllWindowsAzureIps')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.DBforMySQL/servers/', parameters('serverName'), '/databases/' , parameters('databaseName'))]",
+                        "[resourceId('Microsoft.DBforMySQL/servers', parameters('serverName'))]"
+                    ],
+                    "properties": {
+                        "startIpAddress": "0.0.0.0",
+                        "endIpAddress": "0.0.0.0"
+                    }
+                },
+                {
+                    "type": "databases",
+                    "apiVersion": "2017-12-01-preview",
+                    "name": "[parameters('databaseName')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.DBforMySQL/servers/', parameters('serverName'))]"
+                    ],
+                    "properties": {
+                        "charset": "[parameters('charset')]",
+                        "collation": "[parameters('collation')]"
+                    }
+                }
+            ]
+        }
+    ]
+}
