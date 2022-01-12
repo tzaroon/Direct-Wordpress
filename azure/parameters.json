@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "databaseName": {
-            "value": "wordpressdb"
+            "value": "wordpressdb2"
         },
         "administratorLogin": {
             "value": "puffersoft"
