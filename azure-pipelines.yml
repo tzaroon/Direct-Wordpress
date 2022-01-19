@@ -37,8 +37,8 @@ stages:
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:
         deploymentScope: 'Resource Group'
-        azureResourceManagerConnection: '$(azureSubscription)'
-        subscriptionId: '$(azureSubscriptionID)'
+        azureResourceManagerConnection: 'Pipeeline'
+        subscriptionId: 'eeb9dfdd-9c17-44c3-a4a0-7529399ce200'
         action: 'Create Or Update Resource Group'
         resourceGroupName: 'Wordpress_Wesbite'
         location: 'East US'
